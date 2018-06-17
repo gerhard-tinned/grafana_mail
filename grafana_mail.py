@@ -63,6 +63,11 @@ def parse_args():
                     dest="api_token", type=str,
                     help="Grafana API Token to access the dashboard.",
                     required=True)
+    parser.add_argument("-t", "--timeout",
+                    dest="api_timeout", type=str,
+                    default=60,
+                    help="Grafana API timeout.",
+                    required=True)
     return parser.parse_args()
 
 def last_day():
@@ -75,18 +80,18 @@ def last_day():
     return str(yesterday_mid), str(midnight)
 
 
-def download(panelId, begin_date, end_date, grafana_server, api_token):
+def download(panelId, begin_date, end_date, grafana_server, api_token, api_timeout):
     if panelId[1] == None:
         url = (grafana_server + '/render/dashboard/db/' +
                panelId[0] + '?from=' +
                begin_date + '&to=' + end_date +
-               '&width=1700&height=500'
+               '&width=1700&height=500&timeout=' + api_timeout
                )
     else:
         url = (grafana_server + '/render/dashboard-solo/db/' +
                panelId[0] + '?from=' +
                begin_date + '&to=' + end_date + '&panelId=' + panelId[1] +
-               '&width=1700&height=500'
+               '&width=1700&height=500&timeout=' + api_timeout
                )
     print url
     r = requests.get(url, headers={"Authorization": "Bearer " + api_token}, stream=True)
@@ -144,7 +149,7 @@ if __name__ == '__main__':
         strFrom = socket.getfqdn()
      
     for panelId in args.panel_list:
-        download(panelId, last_day()[0], last_day()[1], args.grafana_server, args.api_token)
+        download(panelId, last_day()[0], last_day()[1], args.grafana_server, args.api_token, args.api_timeout)
     msgRoot = prepare()
 
     msgStr = """
