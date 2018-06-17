@@ -65,8 +65,17 @@ def parse_args():
                     required=True)
     parser.add_argument("-t", "--timeout",
                     dest="api_timeout", type=str,
-                    default=60,
                     help="Grafana API timeout.",
+                    required=True)
+    parser.add_argument("-w", "--width",
+                    dest="api_width", type=str,
+                    default=1700,
+                    help="Grafana API render width.",
+                    required=True)
+    parser.add_argument("-h", "--height",
+                    dest="api_height", type=str,
+                    default=500,
+                    help="Grafana API render height.",
                     required=True)
     return parser.parse_args()
 
@@ -80,18 +89,18 @@ def last_day():
     return str(yesterday_mid), str(midnight)
 
 
-def download(panelId, begin_date, end_date, grafana_server, api_token, api_timeout):
+def download(panelId, begin_date, end_date, grafana_server, api_token, api_timeout, api_height, api_width):
     if panelId[1] == None:
         url = (grafana_server + '/render/dashboard/db/' +
                panelId[0] + '?from=' +
                begin_date + '&to=' + end_date +
-               '&width=1700&height=500&timeout=' + api_timeout
+               '&width=' + api_width + '&height=' + api_height + '&timeout=' + api_timeout
                )
     else:
         url = (grafana_server + '/render/dashboard-solo/db/' +
                panelId[0] + '?from=' +
                begin_date + '&to=' + end_date + '&panelId=' + panelId[1] +
-               '&width=1700&height=500&timeout=' + api_timeout
+               '&width=' + api_width + '&height=' + api_height + '&timeout=' + api_timeout
                )
     print url
     r = requests.get(url, headers={"Authorization": "Bearer " + api_token}, stream=True)
@@ -149,7 +158,7 @@ if __name__ == '__main__':
         strFrom = socket.getfqdn()
      
     for panelId in args.panel_list:
-        download(panelId, last_day()[0], last_day()[1], args.grafana_server, args.api_token, args.api_timeout)
+        download(panelId, last_day()[0], last_day()[1], args.grafana_server, args.api_token, args.api_timeout, args.api_height, args.api_width)
     msgRoot = prepare()
 
     msgStr = """
