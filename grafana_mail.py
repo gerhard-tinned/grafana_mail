@@ -66,17 +66,17 @@ def parse_args():
     parser.add_argument("-t", "--timeout",
                     dest="api_timeout", type=str,
                     help="Grafana API timeout.",
-                    required=True)
-    parser.add_argument("-w", "--width",
+                    required=False)
+    parser.add_argument("-W", "--width",
                     dest="api_width", type=str,
                     default=1700,
                     help="Grafana API render width.",
-                    required=True)
-    parser.add_argument("-h", "--height",
+                    required=False)
+    parser.add_argument("-H", "--height",
                     dest="api_height", type=str,
                     default=500,
                     help="Grafana API render height.",
-                    required=True)
+                    required=False)
     return parser.parse_args()
 
 def last_day():
